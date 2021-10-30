@@ -22,7 +22,7 @@ namespace TokenAuthAPI.Repositories
                 new User { Id = 3, Username = "guilherme", Password = "guilherme123", Email = "guilherme@email.com", Role = "employee" }
             };
 
-            return users.Where(x => x.Username.ToLower() == username.ToLower() && x.Password == password).FirstOrDefault();
+            return users.Where(x => x.Username == username && x.Password == password).FirstOrDefault();
         }
     }
 }
