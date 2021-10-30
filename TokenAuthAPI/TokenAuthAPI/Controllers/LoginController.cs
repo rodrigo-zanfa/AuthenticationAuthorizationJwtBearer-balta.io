@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.IdentityModel.Tokens;
 
 namespace TokenAuthAPI.Controllers
 {
@@ -28,9 +29,32 @@ namespace TokenAuthAPI.Controllers
 
             var token = TokenService.GenerateToken(user);
 
+            var refreshToken = TokenService.GenerateRefreshToken();
+            TokenService.SaveRefreshToken(model.Username, refreshToken);
+
             user.Password = "";
 
-            return new { user = user, token = token };
+            return new { user = user, token = token, refreshToken = refreshToken };
+        }
+
+        [HttpPost]
+        [Route("refresh")]
+        public IActionResult Refresh(string token, string refreshToken)
+        {
+            var principal = TokenService.GetPrincipalFromExpiredToken(token);
+            var username = principal.Identity.Name;
+            var savedRefreshToken = TokenService.GetRefreshToken(username);
+
+            if (savedRefreshToken != refreshToken)
+                throw new SecurityTokenException("Refresh Token inválido.");
+
+            var newToken = TokenService.GenerateToken(principal.Claims);
+
+            var newRefreshToken = TokenService.GenerateRefreshToken();
+            TokenService.DeleteRefreshToken(username, refreshToken);
+            TokenService.SaveRefreshToken(username, newRefreshToken);
+
+            return new ObjectResult(new { token = newToken, refreshToken = newRefreshToken });
         }
     }
 }
