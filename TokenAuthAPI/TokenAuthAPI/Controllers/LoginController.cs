@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Logging;
 
 namespace TokenAuthAPI.Controllers
 {
@@ -17,11 +18,21 @@ namespace TokenAuthAPI.Controllers
     [Route("v1")]
     public class LoginController : ControllerBase
     {
+        private readonly ILogger<LoginController> _logger;
+
+        public LoginController(ILogger<LoginController> logger)
+        {
+            _logger = logger;
+        }
+
         [HttpPost]
         [Route("login")]
         [AllowAnonymous]
         public async Task<ActionResult<dynamic>> AuthenticateAsync([FromBody] User model)
         {
+            // não é mais necessário logar cada método individualmente, pois está sendo logado através do middleware registrado
+            //_logger.LogInformation("POST login - autenticação do usuário");
+
             var user = UserRepository.Get(model.Username, model.Password);
 
             if (user == null)
@@ -41,6 +52,9 @@ namespace TokenAuthAPI.Controllers
         [Route("refresh")]
         public IActionResult Refresh(string token, string refreshToken)
         {
+            // não é mais necessário logar cada método individualmente, pois está sendo logado através do middleware registrado
+            //_logger.LogInformation("POST refresh - refresh token");
+
             var principal = TokenService.GetPrincipalFromExpiredToken(token);
             var username = principal.Identity.Name;
             var savedRefreshToken = TokenService.GetRefreshToken(username);
