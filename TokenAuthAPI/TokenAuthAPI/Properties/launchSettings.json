@@ -12,18 +12,20 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "v1/anonymous",
+      "launchUrl": "healthcheck",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ELASTIC_SEARCH_URL": "http://192.168.181.19:9200"
       }
     },
     "TokenAuthAPI": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "v1/anonymous",
+      "launchUrl": "healthcheck",
       "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ELASTIC_SEARCH_URL": "http://192.168.181.19:9200"
       }
     }
   }
